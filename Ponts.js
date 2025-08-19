@@ -1,5 +1,4 @@
-
-	// Animation confettis globale
+// Animation confettis globale
 function lancerConfettis(container = document.body) {
 	const confettiContainer = document.createElement('div');
 	confettiContainer.className = 'confetti-container';
@@ -290,10 +289,11 @@ const pontFinalImages = [
 	'Images/pont final 2.jpg',
 	'Images/pont final 3.jpg',
 	'Images/pont final 4.jpg',
-	'Images/pont final 5.jpg',
+	'Images/pont final 5.png',
 	'Images/pont final 6.jpg',
 	'Images/pont final 7.jpg',
-	'Images/pont final 8.jpg'
+	'Images/pont final 8.jpg',
+	'Images/pont final 9.png'
 ];
 const marteauImage = 'Images/marteau.png'; 
 
@@ -812,7 +812,7 @@ function flipMemoryCard(card, imgSrc) {
 	
 	memoryTries++;
 	updateMemoryScore();	
-	}
+}
 	
 }
 
@@ -821,3 +821,150 @@ memoryTab.addEventListener('click', showMemoryLevelSelector);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Jeu Rapid'Pont
+
+const defiTab = document.querySelector('[data-tab="defi"]');
+const defiContent = document.getElementById('defi-content');
+
+defiTab.addEventListener('click', showRapidPontIntro);
+
+function showRapidPontIntro() {
+    defiContent.innerHTML = '';
+    defiContent.style.display = 'block';
+    const introDiv = document.createElement('div');
+    introDiv.style.textAlign = 'center';
+    introDiv.style.marginTop = '40px';
+    introDiv.style.marginBottom = '32px';
+    introDiv.style.fontSize = '1.2em';
+    introDiv.innerHTML = `
+        <h2 style="margin-bottom:18px;">Rapid'Pont</h2>
+        <p style="max-width:480px;margin:0 auto 18px auto;">Le but du jeu : des ponts vont s'afficher un par un pendant une demi-seconde à des endroits différents sur l'écran.<br>Appuie sur le plus de ponts possible en 20 secondes !<br>Le chrono s'affiche en haut, le score à droite.</p>
+    `;
+    const startBtn = document.createElement('button');
+    startBtn.textContent = 'Start';
+    startBtn.className = 'pontmystere-btn';
+    startBtn.style.background = '#4b6cb7';
+    startBtn.style.color = '#fff';
+    startBtn.style.display = 'block';
+    startBtn.style.margin = '28px auto 0 auto';
+    startBtn.style.padding = '12px 32px';
+    startBtn.style.fontSize = '1.2em';
+    startBtn.style.borderRadius = '8px';
+    startBtn.style.border = 'none';
+    startBtn.style.cursor = 'pointer';
+    startBtn.onclick = startRapidPontGame;
+    defiContent.appendChild(introDiv);
+    defiContent.appendChild(startBtn);
+}
+
+function startRapidPontGame() {
+    defiContent.innerHTML = '';
+    let rapidScore = 0;
+    let rapidTime = 20;
+    let rapidInterval = null;
+    let rapidPontTimeout = null;
+    const totalPonts = 40;
+    let pontsShown = 0;
+    // Affichage du timer et du score
+    const infoDiv = document.createElement('div');
+    infoDiv.style.textAlign = 'center';
+    infoDiv.style.fontSize = '1.2em';
+    infoDiv.style.marginBottom = '12px';
+    infoDiv.innerHTML = `<span id="rapid-timer">⏱️ ${rapidTime}s</span> | Score : <span id="rapid-score">0/${totalPonts}</span>`;
+    defiContent.appendChild(infoDiv);
+
+    // Zone de jeu
+    const gameDiv = document.createElement('div');
+    gameDiv.id = 'rapidpont-game-area';
+    gameDiv.style.width = '100%';
+    gameDiv.style.height = '340px';
+    gameDiv.style.position = 'relative';
+    gameDiv.style.margin = '0 auto 18px auto';
+    gameDiv.style.background = '#eaeaea';
+    gameDiv.style.borderRadius = '18px';
+    gameDiv.style.overflow = 'hidden';
+    defiContent.appendChild(gameDiv);
+
+    // Fonction pour afficher un pont pendant 0,5s
+    function showPontFlash() {
+        if (pontsShown >= totalPonts) {
+            endGame();
+            return;
+        }
+        gameDiv.innerHTML = '';
+        pontsShown++;
+        document.getElementById('rapid-score').textContent = `${rapidScore}/${totalPonts}`;
+        // Choisir une image aléatoire
+        const pont = classement[Math.floor(Math.random() * classement.length)];
+        const img = document.createElement('img');
+        img.src = pont.image;
+        img.alt = pont.nom;
+        img.style.width = '220px';
+        img.style.height = '140px';
+        img.style.objectFit = 'cover';
+        img.style.position = 'absolute';
+        const maxLeft = gameDiv.clientWidth - 220;
+        const maxTop = gameDiv.clientHeight - 140;
+        const left = Math.max(0, Math.floor(Math.random() * (maxLeft + 1)));
+        const top = Math.max(0, Math.floor(Math.random() * (maxTop + 1)));
+        img.style.left = left + 'px';
+        img.style.top = top + 'px';
+        img.style.cursor = 'pointer';
+        img.style.boxShadow = '0 2px 8px rgba(75,108,183,0.10)';
+        let clicked = false;
+        img.addEventListener('pointerdown', function(e) {
+            if (!clicked) {
+                rapidScore++;
+                document.getElementById('rapid-score').textContent = `${rapidScore}/${totalPonts}`;
+                clicked = true;
+            }
+        });
+        gameDiv.appendChild(img);
+        // Retirer l'image après 0,5s et afficher la suivante
+        rapidPontTimeout = setTimeout(() => {
+            gameDiv.innerHTML = '';
+            if (rapidTime > 0 && pontsShown < totalPonts) showPontFlash();
+            else endGame();
+        }, 500);
+    }
+
+    function endGame() {
+        clearInterval(rapidInterval);
+        clearTimeout(rapidPontTimeout);
+        gameDiv.innerHTML = '';
+        // Afficher le score final
+        const resultDiv = document.createElement('div');
+        resultDiv.style.textAlign = 'center';
+        resultDiv.style.fontSize = '1.5em';
+        resultDiv.style.marginTop = '24px';
+        resultDiv.innerHTML = `Jeu terminé !<br>Score : <strong>${rapidScore}/${totalPonts}</strong><br><span style='font-size:1em;color:#4b6cb7;'>Partage ton score avec tes collègues !</span>`;
+        defiContent.appendChild(resultDiv);
+        // Bouton recommencer
+        const restartBtn = document.createElement('button');
+        restartBtn.textContent = 'Rejouer';
+        restartBtn.className = 'pontmystere-btn';
+        restartBtn.style.background = '#4b6cb7';
+        restartBtn.style.color = '#fff';
+        restartBtn.style.display = 'block';
+        restartBtn.style.margin = '18px auto 0 auto';
+        restartBtn.style.padding = '10px 24px';
+        restartBtn.style.fontSize = '1em';
+        restartBtn.style.borderRadius = '8px';
+        restartBtn.style.border = 'none';
+        restartBtn.style.cursor = 'pointer';
+        restartBtn.onclick = showRapidPontIntro;
+        defiContent.appendChild(restartBtn);
+    }
+
+    showPontFlash();
+
+    // Timer
+    rapidInterval = setInterval(() => {
+        rapidTime--;
+        document.getElementById('rapid-timer').textContent = `⏱️ ${rapidTime}s`;
+        if (rapidTime <= 0) {
+            endGame();
+        }
+    }, 1000);
+}
