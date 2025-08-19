@@ -409,13 +409,14 @@ function ramassePontItem(item) {
 					lastPontIndex = idx;
 					img.src = pontFinalImages[idx];
 					img.alt = 'Image de pont construit';
-					compteurDiv.remove();
+					compteurDiv.innerHTML = 'Sauras-tu deviner dans quel jeu vidéo il se trouve ?';
 					lancerConfettis(bridgesArea);
-					// Réactive le bouton après 5 secondes
+					// Réactive le bouton après 10 secondes
 					setTimeout(() => {
+						compteurDiv.remove();
 						buildBtn.style.display = 'block';
 						bridgesArea.innerHTML = '';
-					}, 5000);
+					}, 10000);
 				}, 350);
 			};
 			// Positionner le marteau par rapport à l'image
@@ -440,6 +441,7 @@ const pontMystereGame = document.getElementById('pontmystere-game');
 let manche = 0;
 let score = [false, false, false];
 let mancheImages = [];
+let pontMystereVersion = 1; // 1 = normal, 2 = très zoomé carré
 
 function shuffle(array) {
 	for (let i = array.length - 1; i > 0; i--) {
@@ -449,6 +451,28 @@ function shuffle(array) {
 	return array;
 }
 
+
+
+function showPontMystereVersionSelector() {
+	pontMystereGame.innerHTML = '';
+	const selector = document.createElement('div');
+	selector.style.textAlign = 'center';
+	selector.style.marginBottom = '18px';
+	selector.innerHTML = `
+		<h3 style="text-align:center;margin-bottom:18px;">Choisis la version du jeu :</h3>
+		<div style="display:flex;justify-content:center;gap:24px;">
+			<button class="pontmystere-btn pontmystere-version-btn" data-version="1">Version 1</button>
+			<button class="pontmystere-btn pontmystere-version-btn" data-version="2">Version 2</button>
+		</div>
+	`;
+	pontMystereGame.appendChild(selector);
+	Array.from(selector.querySelectorAll('.pontmystere-version-btn')).forEach(btn => {
+		btn.onclick = () => {
+			pontMystereVersion = parseInt(btn.dataset.version);
+			startPontMystere();
+		};
+	});
+}
 
 function startPontMystere() {
 	manche = 0;
@@ -470,43 +494,79 @@ function showPontMystereManche() {
 	}
 	pontMystereGame.appendChild(scoreDiv);
 	// Fin du jeu
-		if (manche >= 3) {
-			// Message BRAVO
-			const felicitation = document.createElement('div');
-			felicitation.className = 'pontmystere-felicitation';
-			felicitation.textContent = 'BRAVO';
-			felicitation.style.textAlign = 'center';
-			pontMystereGame.appendChild(felicitation);
-			// Bouton recommencer centré
-			const restartBtn = document.createElement('button');
-			restartBtn.textContent = 'Recommencer';
-			restartBtn.className = 'pontmystere-btn pontmystere-btn-restart';
-			restartBtn.style.background = '#4b6cb7';
-			restartBtn.style.color = '#fff';
-			restartBtn.style.display = 'block';
-			restartBtn.style.margin = '18px auto 0 auto';
-			restartBtn.style.padding = '10px 24px';
-			restartBtn.style.fontSize = '1em';
-			restartBtn.style.borderRadius = '8px';
-			restartBtn.style.border = 'none';
-			restartBtn.style.cursor = 'pointer';
-			restartBtn.onclick = startPontMystere;
-			pontMystereGame.appendChild(restartBtn);
-			// Confettis
-			lancerConfettis();
-			return;
-		}
+	if (manche >= 3) {
+		// Message BRAVO
+		const felicitation = document.createElement('div');
+		felicitation.className = 'pontmystere-felicitation';
+		felicitation.textContent = 'BRAVO';
+		felicitation.style.textAlign = 'center';
+		pontMystereGame.appendChild(felicitation);
+		// Désactive tous les boutons de propositions restants
+		const propBtns = pontMystereGame.querySelectorAll('.pontmystere-btn');
+		propBtns.forEach(btn => {
+			btn.disabled = true;
+			btn.style.cursor = 'not-allowed';
+			btn.style.opacity = '0.6';
+		});
+		// Bouton recommencer centré
+		const restartBtn = document.createElement('button');
+		restartBtn.textContent = 'Recommencer';
+		restartBtn.className = 'pontmystere-btn pontmystere-btn-restart';
+		restartBtn.style.background = '#4b6cb7';
+		restartBtn.style.color = '#fff';
+		restartBtn.style.display = 'block';
+		restartBtn.style.margin = '18px auto 0 auto';
+		restartBtn.style.padding = '10px 24px';
+		restartBtn.style.fontSize = '1em';
+		restartBtn.style.borderRadius = '8px';
+		restartBtn.style.border = 'none';
+		restartBtn.style.cursor = 'pointer';
+		restartBtn.onclick = showPontMystereVersionSelector;
+		pontMystereGame.appendChild(restartBtn);
+		// Confettis
+		lancerConfettis();
+		return;
+	}
 
-			// Image floutée et zoomée dans un conteneur
-			const imgContainer = document.createElement('div');
-			imgContainer.className = 'pontmystere-img-container';
-			imgContainer.style.position = 'relative';
-			const img = document.createElement('img');
-			img.className = 'pontmystere-img';
-			img.src = mancheImages[manche].image;
-			img.alt = 'Pont mystère';
-			imgContainer.appendChild(img);
-			pontMystereGame.appendChild(imgContainer);
+	// Image selon la version
+	const imgContainer = document.createElement('div');
+	imgContainer.className = 'pontmystere-img-container';
+	imgContainer.style.position = 'relative';
+	const img = document.createElement('img');
+	img.className = 'pontmystere-img';
+	img.src = mancheImages[manche].image;
+	img.alt = 'Pont mystère';
+	if (pontMystereVersion === 1) {
+		// Version classique : zoom et flou
+		img.style.width = '420px';
+		img.style.height = '260px';
+		img.style.objectFit = 'cover';
+		img.style.filter = 'blur(6px) brightness(0.85)';
+		img.style.transform = 'scale(1.18)';
+		img.style.borderRadius = '18px';
+		imgContainer.style.width = '420px';
+		imgContainer.style.height = '260px';
+		imgContainer.style.margin = '0 auto 18px auto';
+	} else {
+		// Version très zoomée carré
+		img.style.width = '220px';
+		img.style.height = '220px';
+		img.style.objectFit = 'cover';
+		img.style.borderRadius = '18px';
+		imgContainer.style.width = '220px';
+		imgContainer.style.height = '220px';
+		imgContainer.style.margin = '0 auto 18px auto';
+		// Zoom très fort sur une partie aléatoire de l'image
+		const zoomLevel = 2.8 + Math.random() * 0.7; // entre 2.8 et 3.5
+		// Pour chaque manche, générer un offset unique
+		const offsetX = (Math.random() * 0.8 - 0.4); // entre -0.4 et +0.4
+		const offsetY = (Math.random() * 0.8 - 0.4);
+		img.style.transform = `scale(${zoomLevel}) translate(${offsetX * 100}%,${offsetY * 100}%)`;
+		img.style.filter = 'brightness(0.95)';
+	}
+	imgContainer.appendChild(img);
+	pontMystereGame.appendChild(imgContainer);
+
 	// Propositions
 	const options = [mancheImages[manche].nom];
 	// Ajouter 2 autres noms aléatoires
@@ -521,19 +581,26 @@ function showPontMystereManche() {
 		btn.className = 'pontmystere-btn';
 		btn.textContent = opt;
 		btn.onclick = () => {
-					if (opt === mancheImages[manche].nom) {
-						score[manche] = true;
-						img.style.filter = 'blur(0px) brightness(1.1)';
-						img.style.transform = 'scale(1)';
-						btn.style.background = '#4bb76c';
-						setTimeout(() => {
-							manche++;
-							showPontMystereManche();
-						}, 900);
-					} else {
-						btn.style.background = '#b76c4b';
-						showPontMysterePerdu();
-					}
+			if (opt === mancheImages[manche].nom) {
+				score[manche] = true;
+				img.style.filter = 'blur(0px) brightness(1.1)';
+				img.style.transform = 'scale(1)';
+				btn.style.background = '#4bb76c';
+				setTimeout(() => {
+					manche++;
+					showPontMystereManche();
+				}, 900);
+			} else {
+				// Désactive tous les boutons de propositions
+				const allBtns = propDiv.querySelectorAll('.pontmystere-btn');
+				allBtns.forEach(b => {
+					b.disabled = true;
+					b.style.cursor = 'not-allowed';
+					b.style.opacity = '0.6';
+				});
+				btn.style.background = '#b76c4b';
+				showPontMysterePerdu();
+			}
 		};
 		propDiv.appendChild(btn);
 	});
@@ -560,7 +627,7 @@ function showPontMysterePerdu() {
 }
 
 // Lancer le jeu à l'ouverture de l'onglet
-pontMystereTab.addEventListener('click', startPontMystere);
+pontMystereTab.addEventListener('click', showPontMystereVersionSelector);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -710,7 +777,7 @@ function flipMemoryCard(card, imgSrc) {
 				c1.classList.remove('flipped');
 				c2.classList.remove('flipped');
 				memoryFlipped = [];
-			}, 700);
+			}, 1200); // délai augmenté pour observer
 		}
 			// Si limite atteinte et pas toutes les paires, mais seulement si on n'a pas déjà gagné
 			if (memoryMatched !==6){
