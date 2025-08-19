@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Les ponts</title>
+	<link rel="stylesheet" href="Ponts.css">
+</head>
+<body>
+	<h1>Les Ponts de France</h1>
+	<div class="tabs">
+		<button class="tab-btn" data-tab="classement">Classement des ponts</button>
+		<button class="tab-btn" data-tab="quizzz">Quizz</button>
+		<button class="tab-btn" data-tab="construction">Construire un Pont</button>
+		<button class="tab-btn" data-tab="pontmystere">Pont mystère</button>
+		<button class="tab-btn" data-tab="memory">Memory</button>
+	</div>
+	<div class="tab-content" id="classement">
+		<!-- Classement des ponts -->
+		<h2>Les plus beaux ponts de notre France</h2>
+        <p>Ce classement est entièrement basé sur mon jugement. Il est donc 100% subjectif. Rien de plus à ajouter.</p>
+		<br><br>
+	<ol id="classement-list"></ol>
+	</div>
+	<div class="tab-content" id="quizzz" style="display:none;">
+	<!-- Quizz sur les ponts -->
+	<h2>Quizz sur les ponts de France</h2>
+		<div id="quizzz-list"></div>
+	</div>
+	<div class="tab-content" id="construction" style="display:none;">
+		<!-- Bouton pour construire des ponts -->
+		<button id="build-bridge-btn">Construire un pont !</button>
+		<br><br>
+		<p id="comment"></p>
+
+		<div id="bridges-area"></div>
+	</div>
+	<div class="tab-content" id="pontmystere" style="display:none;">
+		<h2 style="text-align:center;">Pont mystère</h2>
+		<div id="pontmystere-game" style="display:flex;flex-direction:column;align-items:center;justify-content:center;"></div>
+	</div>
+	<div class="tab-content" id="memory" style="display:none;">
+		<h2 style="text-align:center;">Memory des ponts</h2>
+		<div id="memory-game" style="display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin-top:24px;"></div>
+		<div id="memory-score" style="text-align:center;margin-top:18px;font-size:1.2em;"></div>
+	</div>
+	<script src="Ponts.js"></script>
+</body>
+</html>
