@@ -729,6 +729,8 @@ function flipMemoryCard(card, imgSrc) {
 	card.classList.add('flipped');
 	memoryFlipped.push(card);
 	if (memoryFlipped.length === 2) {
+		memoryTries++; 
+		updateMemoryScore();	
 		const [c1, c2] = memoryFlipped;
 		if (c1.dataset.img === c2.dataset.img) {
 			// Paire trouvée
@@ -767,8 +769,8 @@ function flipMemoryCard(card, imgSrc) {
 								showMemoryLevelSelector();
 							};
 							memoryScore.parentNode.insertBefore(restartBtn, memoryScore.nextSibling);
-						}
-			}, 500);
+							}
+				}, 500);
 		} else {
 			// Pas une paire
 			setTimeout(() => {
@@ -779,40 +781,41 @@ function flipMemoryCard(card, imgSrc) {
 				memoryFlipped = [];
 			}, 1200); // délai augmenté pour observer
 		}
-			// Si limite atteinte et pas toutes les paires, mais seulement si on n'a pas déjà gagné
-			if (memoryMatched !==6){
-			if (memoryLevel !== 1 && memoryTries >= memoryMaxTries && memoryMatched < 6) {
-				memoryScore.textContent = `Limite atteinte ! Tu as trouvé ${memoryMatched} paires sur 6.`;
-				memoryScore.style.background = '#f7d4d4';
-				memoryScore.style.color = '#b76c4b';
-				memoryScore.style.borderRadius = '8px';
-				// Désactive toutes les cartes
-				Array.from(memoryGame.children).forEach(card => card.onclick = null);
-				// Ajouter le bouton recommencer centré
-				const restartBtn = document.createElement('button');
-				restartBtn.textContent = 'Recommencer';
-				restartBtn.className = 'memory-restart-btn';
-				restartBtn.style.marginTop = '18px';
-				restartBtn.style.padding = '10px 24px';
-				restartBtn.style.fontSize = '1em';
-				restartBtn.style.borderRadius = '8px';
-				restartBtn.style.border = 'none';
-				restartBtn.style.background = '#4b6cb7';
-				restartBtn.style.color = '#fff';
-				restartBtn.style.cursor = 'pointer';
-				restartBtn.style.display = 'block';
-				restartBtn.style.marginLeft = 'auto';
-				restartBtn.style.marginRight = 'auto';
-				restartBtn.onclick = function() {
-					restartBtn.remove();
-					showMemoryLevelSelector();
-				};
-				memoryScore.parentNode.insertBefore(restartBtn, memoryScore.nextSibling);
-			}}
-	
-	memoryTries++;
-	updateMemoryScore();	
-}
+
+			// Si limite atteinte et pas toutes les paires (avec un délai pour laisser vérifier qu'on a pas déjà gagné)
+			setTimeout(() => {
+				if (memoryMatched !== 6) {
+					if (memoryLevel !== 1 && memoryTries >= memoryMaxTries && memoryMatched < 6) {
+						memoryScore.textContent = `Limite atteinte ! Tu as trouvé ${memoryMatched} paires sur 6.`;
+						memoryScore.style.background = '#f7d4d4';
+						memoryScore.style.color = '#b76c4b';
+						memoryScore.style.borderRadius = '8px';
+						// Désactive toutes les cartes
+						Array.from(memoryGame.children).forEach(card => card.onclick = null);
+						// Ajouter le bouton recommencer centré
+						const restartBtn = document.createElement('button');
+						restartBtn.textContent = 'Recommencer';
+						restartBtn.className = 'memory-restart-btn';
+						restartBtn.style.marginTop = '18px';
+						restartBtn.style.padding = '10px 24px';
+						restartBtn.style.fontSize = '1em';
+						restartBtn.style.borderRadius = '8px';
+						restartBtn.style.border = 'none';
+						restartBtn.style.background = '#4b6cb7';
+						restartBtn.style.color = '#fff';
+						restartBtn.style.cursor = 'pointer';
+						restartBtn.style.display = 'block';
+						restartBtn.style.marginLeft = 'auto';
+						restartBtn.style.marginRight = 'auto';
+						restartBtn.onclick = function() {
+							restartBtn.remove();
+							showMemoryLevelSelector();
+						};
+						memoryScore.parentNode.insertBefore(restartBtn, memoryScore.nextSibling);
+					}
+				}
+			}, 500);
+	}
 	
 }
 
