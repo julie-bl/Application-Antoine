@@ -938,7 +938,7 @@ function startRapidPontGame() {
         resultDiv.style.textAlign = 'center';
         resultDiv.style.fontSize = '1.5em';
         resultDiv.style.marginTop = '24px';
-        resultDiv.innerHTML = `Jeu terminé !<br>Score : <strong>${rapidScore}/${totalPonts}</strong><br><span style='font-size:1em;color:#4b6cb7;'>Partage ton score avec tes collègues !</span>`;
+        resultDiv.innerHTML = `Jeu terminé !<br>Score : <strong>${rapidScore}/${totalPonts}</strong><br><br><span style='font-size:1em;color:#4b6cb7;'>Tu penses pouvoir faire mieux ?</span>`;
         defiContent.appendChild(resultDiv);
         // Bouton recommencer
         const restartBtn = document.createElement('button');
