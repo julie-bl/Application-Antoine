@@ -839,13 +839,14 @@ function showRapidPontIntro() {
     introDiv.style.textAlign = 'center';
     introDiv.style.marginTop = '40px';
     introDiv.style.marginBottom = '32px';
-    introDiv.style.fontSize = '1.2em';
+    introDiv.style.fontSize = '1em';
     introDiv.innerHTML = `
-        <h2 style="margin-bottom:18px;">Rapid'Pont</h2>
-        <p style="max-width:480px;margin:0 auto 18px auto;">Le but du jeu : des ponts vont s'afficher un par un pendant une demi-seconde à des endroits différents sur l'écran.<br>Appuie sur le plus de ponts possible en 20 secondes !<br>Le chrono s'affiche en haut, le score à droite.</p>
+        <h2 style="text-align:center;">Rapid'Pont</h2>
+        <p style="max-width:800px;margin:0 auto 12px auto;"><strong>BUT DU JEU:</strong> <br> Des ponts vont s'afficher un par un pendant une très courte durée à des endroits différents sur l'écran => Appuie sur le plus de ponts possible en 20 secondes !<br></p>
+		<p style="fontsize ='0.8em';">Le chrono et le score s'affichent en haut.</p>
     `;
     const startBtn = document.createElement('button');
-    startBtn.textContent = 'Start';
+    startBtn.textContent = 'Commencer';
     startBtn.className = 'pontmystere-btn';
     startBtn.style.background = '#4b6cb7';
     startBtn.style.color = '#fff';
